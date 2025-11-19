@@ -1,68 +1,62 @@
 'use client';
-import React from 'react';
-import Icon from '../../../components/layout/AppIcon';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchRoles, setSelectedRoleId } from '@/common/store/slices/roleSlice';
+import Icon from '@/components/layout/AppIcon';
 
 const RoleIndicator = () => {
-  const roleTypes = [
-    {
-      id: 'jobseeker',
-      label: 'Job Seeker',
-      icon: 'User',
-      description: 'Find your dream job',
-      color: 'text-accent'
-    },
-    {
-      id: 'employer',
-      label: 'Employer',
-      icon: 'Building2',
-      description: 'Hire top talent',
-      color: 'text-primary'
-    }
-  ];
+  const dispatch = useDispatch();
+  const { roles = [], selectedRoleId } = useSelector((state) => state.role || {});
+
+  useEffect(() => {
+    dispatch(fetchRoles());
+  }, [dispatch]);
+
+  const getConfig = (roleName) => {
+    const name = (roleName || "").toLowerCase();
+    const isApplicant = name.includes('job') || name.includes('applic') || name === 'jobseeker';
+    return {
+      icon: isApplicant ? 'User' : 'Building2',
+      label: isApplicant ? 'Job Seeker' : 'Employer',
+      description: isApplicant ? 'Find your dream job' : 'Hire top talent',
+      color: isApplicant ? 'text-accent' : 'text-primary',
+    };
+  };
 
   return (
-    <div className="mb-8">
-      <div className="text-center mb-6">
-        <h3 className="text-lg font-semibold text-foreground mb-2">
-          Welcome to JobEazy
-        </h3>
-        <p className="text-sm text-muted-foreground">
-          Sign in to access your personalized dashboard
-        </p>
+    <div className="mb-6">
+      <div className="text-center mb-4">
+        <h3 className="text-lg font-semibold text-foreground mb-1">Choose your role</h3>
+        <p className="text-sm text-muted-foreground">Select Job Seeker or Employer before logging in</p>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-        {roleTypes?.map((role) => (
-          <div
-            key={role?.id}
-            className="flex flex-col items-center p-4 bg-muted/50 rounded-md border border-border hover:bg-muted transition-micro"
-          >
-            <div className={`w-12 h-12 rounded-full bg-card border border-border flex items-center justify-center mb-3`}>
-              <Icon name={role?.icon} size={20} className={role?.color} />
-            </div>
-            <h4 className="text-sm font-medium text-foreground mb-1">
-              {role?.label}
-            </h4>
-            <p className="text-xs text-muted-foreground text-center">
-              {role?.description}
-            </p>
-          </div>
-        ))}
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {roles.map((role) => {
+          const cfg = getConfig(role.roleName);
+          const active = selectedRoleId === role.id;
+          return (
+            <button
+              key={role.id}
+              onClick={() => dispatch(setSelectedRoleId(role.id))}
+              className={`flex flex-col items-center p-4 rounded-md border transition text-left
+                ${active ? 'border-primary bg-primary/10' : 'bg-muted/50 border-border hover:bg-muted'}
+              `}
+              type="button"
+            >
+              <div className="w-12 h-12 rounded-full bg-card border border-border flex items-center justify-center mb-3">
+                <Icon name={cfg.icon} size={20} className={cfg.color} />
+              </div>
+              <div>
+                <h4 className="text-sm font-medium text-foreground mb-1">{cfg.label}</h4>
+                <p className="text-xs text-muted-foreground">{cfg.description}</p>
+              </div>
+            </button>
+          );
+        })}
       </div>
-      {/* <div className="bg-accent/10 border border-accent/20 rounded-md p-4">
-        <div className="flex items-start space-x-3">
-          <Icon name="Info" size={16} className="text-accent mt-0.5" />
-          <div className="flex-1">
-            <h4 className="text-sm font-medium text-foreground mb-1">
-              Demo Credentials Available
-            </h4>
-            <p className="text-xs text-muted-foreground">
-              Use the demo credentials provided in the error message to explore different user roles and features.
-            </p>
-          </div>
-        </div>
-      </div> */}
     </div>
   );
 };
 
 export default RoleIndicator;
+

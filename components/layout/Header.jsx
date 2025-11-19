@@ -4,16 +4,17 @@ import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import Icon from './AppIcon';
 import Button from '../shared/button/page';
-
+import { useAuthActions } from '@/common/hooks/useAuthActions';
 const Header = ({ userRole = null, subscriptionStatus = 'active', isAuthenticated = false }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const { logoutUser } = useAuthActions();
+
   const location = usePathname();
   const router = useRouter();
 
   const handleLogout = () => {
-    // Logout logic here
-    router.push('/');
+    logoutUser();
   };
 
   const getNavigationItems = () => {

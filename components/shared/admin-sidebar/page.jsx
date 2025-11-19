@@ -34,9 +34,9 @@ const AdminSidebar = ({ isCollapsed = false, onToggleCollapse }) => {
       icon: 'Users',
       items: [
         // { label: 'All Users', path: '/admin/users', icon: 'UserCheck' },
-        // { label: 'Applicants', path: '/admin/applicants', icon: 'User' },
         // { label: 'Employers', path: '/admin/employers', icon: 'Building2' },
         { label: 'Roles', path: '/admin/roles', icon: 'Shield' },
+        { label: 'Jobseekers', path: '/admin/jobseeker', icon: 'User' },
       ],
     },
     {

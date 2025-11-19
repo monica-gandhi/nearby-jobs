@@ -6,15 +6,21 @@ export const apiRequest = async (
   url,
   method = 'POST',
   body = null,
+  // Optional headers object (e.g. { Authorization: `Bearer ${token}` })
+  extraHeaders = null,
+  // Optional router (kept as later arg for backward-compatibility)
   router = null,
   responseType = 'json',
   downloadFilename = '',
 ) => {
-  const token = store.getState().auth.token;
+  // token from redux store (will be used if no Authorization provided via extraHeaders)
+  const storeToken = store.getState().auth.token;
   const isFormData = body instanceof FormData;
 
   const headers = {
-    ...(token && { Authorization: `Bearer ${token}` }),
+    // prefer Authorization provided in extraHeaders (if any), otherwise fall back to store token
+    ...(storeToken && { Authorization: `Bearer ${storeToken}` }),
+    ...(extraHeaders || {}),
     ...(!isFormData && { 'Content-Type': 'application/json' }),
   };
 

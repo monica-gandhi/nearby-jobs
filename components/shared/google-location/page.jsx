@@ -53,8 +53,12 @@ const GoogleMapPicker = ({
     };
 
     const handlePlaceChanged = () => {
-        const place = autocompleteRef.current.getPlace();
-        if (!place.geometry || !place.geometry.location) return;
+        const place = autocompleteRef.current?.getPlace?.();
+        // Defensive: ensure place and geometry exist (some autocomplete results may not include geometry)
+        if (!place || !place.geometry || !place.geometry.location) {
+            console.warn('Place has no geometry. Place object:', place);
+            return;
+        }
 
         const lat = place.geometry.location.lat();
         const lng = place.geometry.location.lng();
@@ -87,7 +91,17 @@ const GoogleMapPicker = ({
             )}
 
             <Autocomplete
-                onLoad={(autocomplete) => (autocompleteRef.current = autocomplete)}
+                onLoad={(autocomplete) => {
+                    // store reference and request fields we need (geometry & formatted_address)
+                    autocompleteRef.current = autocomplete;
+                    try {
+                        // setFields available on the Autocomplete instance to limit what getPlace returns
+                        autocompleteRef.current.setFields(['geometry', 'formatted_address', 'name']);
+                    } catch (err) {
+                        // not critical; continue without throwing
+                        console.debug('Could not set fields on autocomplete instance', err);
+                    }
+                }}
                 onPlaceChanged={handlePlaceChanged}
             >
                 <input
