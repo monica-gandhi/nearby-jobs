@@ -1,47 +1,19 @@
-// 'use client';
-// import React, { useState } from 'react';
-// import Input from '@/components/shared/input/page';
-// import Button from '@/components/shared/button/page';
-// import toast from 'react-hot-toast';
-
-// const NormalRegistration = ({ selectedRole, onNext }) => {
-//     const [form, setForm] = useState({ name: '', email: '', password: '' });
-
-//     const handleSubmit = (e) => {
-//         e.preventDefault();
-//         if (!form.email || !form.password || !form.email)
-//             return toast.error('Please fill all fields');
-//         console.log('form', form);
-//         toast.success('Registered successfully!');
-//         onNext();
-//     };
-
-//     return (
-//         <form onSubmit={handleSubmit} className="space-y-4 mt-6">
-//             <Input label={selectedRole === 'employer' ? 'Company Name' : 'Full Name'} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-//             <Input label="Email" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
-//             <Input label="Password" type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
-//             <Button type="submit" fullWidth>Register</Button>
-//         </form>
-//     );
-// };
-
-// export default NormalRegistration;
-
 'use client';
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import Input from '@/components/shared/input/page';
 import Button from '@/components/shared/button/page';
 import { apiRequest } from '@/common/api/apiService';
 import apiRoutes from '@/common/constants/apiRoutes';
 import { getDeviceInfo } from '@/common/utils/deviceInfo';
 import { showSuccess, showError } from '@/common/toast/toastService';
+import { loginSuccess } from '@/common/store/auth/authSlice';
 
 const NormalRegistration = ({ selectedRole, onNext }) => {
     const [form, setForm] = useState({ name: '', email: '', password: '' });
     const [loading, setLoading] = useState(false);
     const { selectedRoleId } = useSelector((state) => state.role);
+    const dispatch = useDispatch();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -75,6 +47,16 @@ const NormalRegistration = ({ selectedRole, onNext }) => {
             const response = await apiRequest(apiRoutes.jobSeekerNormalSignIn, 'POST', payload);
 
             if (response.status === 200 || response.data?.status) {
+                const token = response.data?.token || response?.data?.token || response?.token;
+                if (token) {
+                    localStorage.setItem('authToken', token);
+                    // keep redux auth slice in sync so apiService can pick it up
+                    dispatch(loginSuccess({ token, user: { email: form.email } }));
+                }
+
+                // Persist jobseeker id if returned by backend (e.g., "Jobseeker-...")
+                const jobseekerId = response?.data?.id || response?.data?.data?.id || response?.id || response?.data?.jobseekerId || null;
+                if (jobseekerId) localStorage.setItem('jobseekerId', jobseekerId);
                 showSuccess("Registered successfully!");
                 onNext();
             } else {

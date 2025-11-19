@@ -5,13 +5,25 @@ const apiRoutes = {
   adminLogin: `${BASE_URL}/auth/login`,
   //Admin api's end
 
-  //Jobseeker registeration api's
+  //Jobseeker api's
   jobSeekerGoogleSignIn: `${BASE_URL}/jobseeker/googleSignUp`,
   jobSeekerNormalSignIn: `${BASE_URL}/jobseeker/signUp`,
+  jobSeekerLogin:`${BASE_URL}/jobseeker/login`,
+  jobSeekerLogout:`${BASE_URL}/jobseeker/logout`,
   jobSeekerEmailOtp: `${BASE_URL}/jobseeker/emailOtp`,
   jobSeekerEmailVerify: `${BASE_URL}/jobseeker/emailVerification`,
   jobSeekerBasicDetail: `${BASE_URL}/jobseeker/basicDetails`,
-  //Jobseeker registeration api's end
+  jobSeekerIdentityProofUpdate: `${BASE_URL}/jobseeker/identityProofUpdate`,
+  jobSeekerMobileOtp: `${BASE_URL}/jobseeker/mobileOtp`,
+  jobSeekerMobileVerify: `${BASE_URL}/jobseeker/mobileVerification`,
+  jobSeekerResumeUpload: `${BASE_URL}/jobseeker/resumeUpdate`,
+  jobSeekerProfileImageUpdate: `${BASE_URL}/jobseeker/profileImageUpdate`,
+  jobSeekerUpdate: `${BASE_URL}/jobseeker/update`,
+  getJobSeekersList: `${BASE_URL}/jobseeker/list`,
+  viewJobSeeker: `${BASE_URL}/jobseeker/view`,
+  updateJobSeeker: `${BASE_URL}/jobseeker/update`,
+  deleteJobSeeker: `${BASE_URL}/jobseeker/delete`,
+  //Jobseeker api's end
 
   //Role api's
   getRoles: `${BASE_URL}/role/list`,

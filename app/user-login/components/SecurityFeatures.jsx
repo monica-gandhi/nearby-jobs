@@ -1,7 +1,5 @@
-'use client';
 import React from 'react';
-import Icon from '../../../components/layout/AppIcon';
-
+import Icon from '@/components/layout/AppIcon';
 const SecurityFeatures = () => {
   const securityFeatures = [
     {
